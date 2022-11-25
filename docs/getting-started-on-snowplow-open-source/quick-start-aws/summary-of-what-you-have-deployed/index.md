@@ -12,15 +12,99 @@ import TabItem from '@theme/TabItem';
 
 Note: you can very easily edit the script or run each of the terraform modules independently, giving you the flexibility to design the topology of your pipeline according to your needs.
 
-<Tabs groupId="destination">
+<!-- see https://github.com/facebook/docusaurus/issues/8357 -->
+<Tabs groupId="destination" lazy>
   <TabItem value="postgres" label="Postgres" default>
 
-![](images/postgres.png)
+```mermaid
+%%{init: {"flowchart": {"curve": "bump"}}}%%
+flowchart LR
+    trackers>Trackers]
+    subgraph "SNOWPLOW PIPELINE IN YOUR CLOUD ACCOUNT"
+        collect{{"<b>Collector</b>\n<i>stream-collector app</i>\n(EC2)"}}
+        raw[["<b>Raw Stream</b>\n(Kinesis)"]]
+        enrich{{"<b>Enrich</b>\n<i>enrich-kinesis app</i>\n(EC2)"}}
+        iglu{{"<b>Iglu Server</b>\n(EC2)"}}
+        igludb[("<b>Iglu Database</b>\n(RDS)")]
+        good[["<b>Good Enriched Stream</b>\n(Kinesis)"]]
+        bad[["<b>Bad Stream</b>\n(Kinesis)"]]
+        s3loaderraw{{"<b>S3 Loader Raw</b>\n(EC2)"}}
+        s3raw[("<b>Raw Events</b>\n(S3)")]
+        s3loadergood{{"<b>S3 Loader Good</b>\n(EC2)"}}
+        s3good[("<b>Enriched Events</b>\n(S3)")]
+        s3loaderbad{{"<b>S3 Loader Bad</b>\n(EC2)"}}
+        s3bad[("<b>Failed Events</b>\n(S3)")]
+        psloadergood{{"<b>Postgres Loader Good</b>\n(EC2)"}}
+        psloaderbad{{"<b>Postgres Loader Bad</b>\n(EC2)"}}
+        subgraph "<b>Postgres</b> (RDS)"
+            psgood[("Atomic Good")]
+            psbad[("Atomic Bad")]
+        end
+        raw-."<i>archive</i>"...->s3loaderraw-.->s3raw
+        enrich-.-oiglu<-.->igludb
+        collect-->raw-->enrich-->good
+        collect & enrich -."<i>events that\nfail validation</i>".->bad
+        good-.->s3loadergood-.->s3good
+        good-->psloadergood-->psgood
+        bad-.->psloaderbad-.->psbad
+        bad-.->s3loaderbad-.->s3bad
+    end
+    trackers-->collect
+```
 
   </TabItem>
   <TabItem value="snowflake" label="Snowflake">
 
-![](images/snowflake.png)
+```mermaid
+%%{init: {"flowchart": {"curve": "bump"}}}%%
+flowchart LR
+    trackers>Trackers]
+    subgraph "SNOWPLOW PIPELINE IN YOUR CLOUD ACCOUNT"
+        collect{{"<b>Collector</b>\n<i>stream-collector app</i>\n(EC2)"}}
+        raw[["<b>Raw Stream</b>\n(Kinesis)"]]
+        enrich{{"<b>Enrich</b>\n<i>enrich-kinesis app</i>\n(EC2)"}}
+        iglu{{"<b>Iglu Server</b>\n(EC2)"}}
+        igludb[("<b>Iglu Database</b>\n(RDS)")]
+        good[["<b>Good Enriched Stream</b>\n(Kinesis)"]]
+        bad[["<b>Bad Stream</b>\n(Kinesis)"]]
+        s3loaderraw{{"<b>S3 Loader Raw</b>\n(EC2)"}}
+        s3raw[("<b>Raw Events</b>\n(S3)")]
+        s3loadergood{{"<b>S3 Loader Good</b>\n(EC2)"}}
+        s3good[("<b>Enriched Events</b>\n(S3)")]
+        s3loaderbad{{"<b>S3 Loader Bad</b>\n(EC2)"}}
+        s3bad[("<b>Failed Events</b>\n(S3)")]
+        sfgood[("<b>Atomic Good</b>\n(Snowflake)")]
+        subgraph sf["SNOWFLAKE LOADER"]
+            loader("<i>detailed below</i>")
+            style loader fill:none,stroke:none
+        end
+        raw-."<i>archive</i>"...->s3loaderraw-.->s3raw
+        enrich-.-oiglu<-.->igludb
+        collect-->raw-->enrich-->good
+        collect & enrich -."<i>events that\nfail validation</i>".->bad
+        good-.->s3loadergood-.->s3good
+        good-->sf-->sfgood
+        bad-.->s3loaderbad-.->s3bad
+    end
+    trackers-->collect
+```
+
+***
+
+```mermaid
+%%{init: {"flowchart": {"curve": "bump"}}}%%
+flowchart LR
+    good[["<b>Good Enriched Stream</b>\n(Kinesis)"]]
+    sfgood[("<b>Atomic Good</b>\n(Snowflake)")]
+    subgraph "SNOWFLAKE LOADER"
+        transformer{{"<b>Transformer</b>\n<i>transformer-kinesis app</i>\n(EC2)"}}
+        loader{{"<b>Loader</b>\n<i>rdb-loader-snowflake app</i>\n(EC2)"}}
+        transformed[("<b>Transformed Events</b>\n(S3)")]
+        queue[["<b>Message Queue</b>\n(SQS)"]]
+    end
+    good-->transformer-->transformed-->loader-->sfgood
+    transformer-."<i>transform complete</i>".->queue-.->loader
+```
 
   </TabItem>
 </Tabs>

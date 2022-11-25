@@ -13,15 +13,87 @@ import TabItem from '@theme/TabItem';
 
 Note: you can very easily edit the script by removing certain modules, giving you the flexibility to design the topology of your pipeline according to your needs.
 
-<Tabs groupId="destination">
+<!-- see https://github.com/facebook/docusaurus/issues/8357 -->
+<Tabs groupId="destination" lazy>
   <TabItem value="postgres" label="Postgres" default>
 
-![](images/postgres.png)
+```mermaid
+%%{init: {"flowchart": {"curve": "bump"}}}%%
+flowchart LR
+    trackers>Trackers]
+    subgraph "SNOWPLOW PIPELINE IN YOUR CLOUD ACCOUNT"
+        collect{{"<b>Collector</b>\n<i>stream-collector app</i>\n(CE)"}}
+        raw[["<b>Raw Stream</b>\n(PubSub)"]]
+        enrich{{"<b>Enrich</b>\n<i>enrich-pubsub app</i>\n(CE)"}}
+        iglu{{"<b>Iglu Server</b>\n(CE)"}}
+        igludb[("<b>Iglu Database</b>\n(CloudSQL)")]
+        good[["<b>Good Enriched Stream</b>\n(PubSub)"]]
+        bad[["<b>Bad Stream</b>\n(PubSub)"]]
+        loadergood{{"<b>Postgres Loader Good</b>\n(CE)"}}
+        loaderbad{{"<b>Postgres Loader Bad</b>\n(CE)"}}
+        subgraph "&nbsp;&nbsp;<b>Postgres</b> (CloudSQL)&nbsp;&nbsp;"
+            psgood[("Atomic Good")]
+            psbad[("Atomic Bad")]
+        end
+        enrich-.-oiglu<-.->igludb
+        collect~~~iglu %% an invisible link to align the pipeline better
+        collect-->raw-->enrich-->good-->loadergood-->psgood
+        collect & enrich -."<i>events that\nfail validation</i>".->bad-.->loaderbad-.->psbad
+    end
+    trackers-->collect
+```
 
   </TabItem>
   <TabItem value="bigquery" label="BigQuery">
 
-![](images/bigquery.png)
+
+
+```mermaid
+%%{init: {"flowchart": {"curve": "bump"}}}%%
+flowchart LR
+    trackers>Trackers]
+    subgraph "SNOWPLOW PIPELINE IN YOUR CLOUD ACCOUNT"
+        collect{{"<b>Collector</b>\n<i>stream-collector app</i>\n(CE)"}}
+        raw[["<b>Raw Stream</b>\n(PubSub)"]]
+        enrich{{"<b>Enrich</b>\n<i>enrich-pubsub app</i>\n(CE)"}}
+        iglu{{"<b>Iglu Server</b>\n(CE)"}}
+        igludb[("<b>Iglu Database</b>\n(CloudSQL)")]
+        good[["<b>Good Enriched Stream</b>\n(PubSub)"]]
+        bad[["<b>Bad Stream</b>\n(PubSub)"]]
+        bqgood[("<b>Atomic Good</b>\n(BigQuery)")]
+        subgraph bq["BIGQUERY LOADER"]
+            loader("<i>detailed below</i>")
+            style loader fill:none,stroke:none
+        end
+        enrich--oiglu<-->igludb
+        collect~~~iglu %% an invisible link to align the pipeline better
+        collect-->raw-->enrich-->good-->bq-->bqgood
+        collect & enrich -."<i>events that\nfail validation</i>".->bad
+    end
+    trackers-->collect
+```
+
+***
+
+```mermaid
+%%{init: {"flowchart": {"curve": "bump"}}}%%
+flowchart LR
+    good[["<b>Good Enriched Stream</b>\n(PubSub)"]]
+    bqgood[("<b>Atomic Good</b>\n(BigQuery)")]
+    subgraph "BIGQUERY LOADER"
+        loader{{"<b>Loader</b>\n(CE)"}}
+        mutator{{"<b>Mutator</b>\n(CE)"}}
+        repeat{{"<b>Repeater</b>\n(CE)"}}
+        types[["<b>Event Types Stream</b>\n(PubSub)"]]
+        failed[["<b>Failed Inserts Stream</b>\n(PubSub)"]]
+        dead[["<b>Dead Letter Stream</b>\n(PubSub)"]]
+    end
+    loader-.->types-."<i>new event types\nto be added</i>".->mutator-."<i>columns added to\nthe dataset table</i>".->bqgood
+    good-->loader-->bqgood
+    %% last link longer on purpose for alignment
+    loader-."<i>events that\ncannot be loaded</i>".->failed-.->repeat-..->bqgood
+    repeat-."<i>events that\ncannot be re-loaded</i>".->dead
+```
 
   </TabItem>
 </Tabs>
