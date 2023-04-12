@@ -31,6 +31,31 @@ module.exports = {
     require.resolve('./snowplow.js'),
     require.resolve('./google.js'),
   ],
+  return {
+    staticDirectories: ['static'],
+    scripts: [
+      {
+        src: '/scripts/init.js',
+        async: true,
+      },
+    ],
+    title: 'Snowplow Documentation',
+    tagline:
+      'Build, deploy, and scale your next data creation project using Snowplow.',
+    url: 'https://docs.snowplow.io',
+    baseUrl: '/',
+    // reset this back to throw, set to warn so that site builds
+    onBrokenLinks: 'warn',
+    onBrokenMarkdownLinks: 'throw',
+    favicon: 'img/favicon.ico',
+    trailingSlash: true,
+    organizationName: 'snowplow',
+    projectName: 'documentation',
+    deploymentBranch: 'main',
+    i18n: {
+      defaultLocale: 'en',
+      locales: ['en'],
+    },
 
   markdown: {
     mermaid: true,
