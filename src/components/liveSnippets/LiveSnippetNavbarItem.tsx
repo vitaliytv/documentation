@@ -1,8 +1,8 @@
 import React from 'react'
 import { LiveSnippetModal } from './LiveSnippetModal'
 import styles from './styles.module.css'
-import IconButton from '@mui/material/IconButton'
 import FlashOnIcon from '@mui/icons-material/FlashOnRounded'
+import { Alert, AlertTitle, IconButton, Snackbar } from '@mui/material'
 
 const getCookie = (name: string) => {
   return (
@@ -13,20 +13,22 @@ const getCookie = (name: string) => {
   )
 }
 
-const successAlert = (show) => {
+const successAlert = (show, onClose) => {
   return (
-    <div
-      className={`${styles.successAlert} 
-        ${show ? styles.successAlertShow : styles.successAlertHide}
-         alert alert--primary`}
-      role="alert"
-    >
-      <button aria-label="Close" className="clean-btn close" type="button">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      Live Snippets enabled! 🎉 Events will be sent to:{' '}
-      {getCookie('collectorEndpoint')}
-    </div>
+    <Snackbar open={show} autoHideDuration={5000} onClose={onClose}>
+      <Alert
+        sx={{ color: 'primary' }}
+        variant="filled"
+        severity="success"
+        className={styles.successAlert}
+      >
+        <AlertTitle>Live Snippets Enabled 🎉</AlertTitle>
+        Events will be sent to{' '}
+        <span className={styles.successAlertCollectorUrl}>
+          {getCookie('collectorEndpoint')}
+        </span>
+      </Alert>
+    </Snackbar>
   )
 }
 
@@ -37,7 +39,6 @@ export default function LiveSnippetNavbarItem(props: {
   mobile?: boolean
 }): JSX.Element {
   const [showModal, setShowModal] = React.useState(false)
-  const [showSuccess, setShowSuccess] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [enabled, setEnabled] = React.useState(liveSnippetsEnabled())
 
@@ -47,6 +48,23 @@ export default function LiveSnippetNavbarItem(props: {
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const [open, setOpen] = React.useState(false)
+
+  const handleAlertClick = () => {
+    setOpen(true)
+  }
+
+  const handleAlertClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setOpen(false)
   }
 
   return (
@@ -84,13 +102,13 @@ export default function LiveSnippetNavbarItem(props: {
       {anchorEl && (
         <LiveSnippetModal
           showModal={enabled}
-          setShowSuccess={setShowSuccess}
+          setShowSuccess={setOpen}
           anchorEl={anchorEl}
           handleClose={handleClose}
           setEnabled={setEnabled}
         />
       )}
-      {successAlert(showSuccess)}
+      {successAlert(open, handleAlertClose)}
     </>
   )
 }

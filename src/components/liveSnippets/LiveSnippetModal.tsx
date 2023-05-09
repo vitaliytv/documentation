@@ -1,11 +1,13 @@
 import React from 'react'
 import styles from './styles.module.css'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
-import Popover from '@mui/material/Popover'
+import {
+  Button,
+  TextField,
+  Card,
+  CardContent,
+  Typography,
+  Popover,
+} from '@mui/material'
 
 const getCookie = (name: string) => {
   return (
@@ -156,7 +158,6 @@ export function LiveSnippetModal(props: {
                     document.cookie = `appId=${appId}; SameSite=Strict`
                     props.setEnabled(true)
                     props.setShowSuccess(true)
-                    setTimeout(() => props.setShowSuccess(false), 2000)
                   }
                   // Set the error messages either way, as we may need to clear them
                   // from a previous error if the input is now valid
