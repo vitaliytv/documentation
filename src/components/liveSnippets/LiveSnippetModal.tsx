@@ -95,8 +95,9 @@ export function LiveSnippetModal(props: {
               </Typography>
 
               <TextField
-                sx={{ m: 1, mx: 0, width: '100%' }}
+                sx={{ m: 1, mx: 0 }}
                 variant="outlined"
+                fullWidth
                 value={collectorEndpoint}
                 onChange={(e) => {
                   setCollectorEndpoint(e.target.value)
@@ -108,7 +109,9 @@ export function LiveSnippetModal(props: {
             </div>
 
             <TextField
-              sx={{ m: 1, mx: 0, mb: 2, width: '100%' }}
+              sx={{ m: 1, mx: 0 }}
+              margin="normal"
+              fullWidth
               value={appId}
               onChange={(e) => setAppId(e.target.value)}
               className={styles.inputBox}
