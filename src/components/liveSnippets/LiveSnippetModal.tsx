@@ -71,10 +71,10 @@ export function LiveSnippetModal(props: {
     >
       <Card sx={{ p: 3 }} className={styles.liveSnippetModal}>
         <CardContent sx={{ p: 1 }}>
-          <Typography variant="h5" sx={{ pb: 1 }}>
+          <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
             LIVE SNIPPETS
           </Typography>
-          <Typography variant="body2" className={styles.subHeader}>
+          <Typography variant="body2" sx={{ mb: 3 }}>
             Snowplow's live snippets allow you to run specific example code
             snippets, allowing you to explore both how to structure your code,
             and explore the rich data that Snowplow produces.
@@ -87,7 +87,6 @@ export function LiveSnippetModal(props: {
             onSubmit={(e) => {
               e.preventDefault()
             }}
-            className={styles.inputWrapper}
           >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="caption" sx={{ ml: '2px' }}>
@@ -96,7 +95,7 @@ export function LiveSnippetModal(props: {
               </Typography>
 
               <TextField
-                sx={{ m: 1, mx: 0 }}
+                sx={{ m: 1, mx: 0, width: '100%' }}
                 variant="outlined"
                 value={collectorEndpoint}
                 onChange={(e) => {
@@ -109,7 +108,7 @@ export function LiveSnippetModal(props: {
             </div>
 
             <TextField
-              sx={{ m: 1, mx: 0 }}
+              sx={{ m: 1, mx: 0, mb: 2, width: '100%' }}
               value={appId}
               onChange={(e) => setAppId(e.target.value)}
               className={styles.inputBox}

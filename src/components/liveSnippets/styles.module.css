@@ -1,24 +1,18 @@
-.liveSnippetModalPopover {
-  top: calc(var(--ifm-navbar-padding-vertical) * 2);
-}
-
 .liveSnippetModal {
   width: 30rem;
   top: 100%;
 }
 
-.liveSnippetButton {
-  transition: background-color 0.5s;
-}
-
 :root[data-theme='dark'] {
   --snippet-active-fg-color: #fdca40;
   --snippet-active-bg-color: #6638b8;
+  --snippet-button-active-bg-color: #af98d5;
 }
 
 :root[data-theme='light'] {
   --snippet-active-fg-color: #fdca40;
   --snippet-active-bg-color: #7345c6;
+  --snippet-button-active-bg-color: #8064ac;
 }
 
 @keyframes animateLiveSnippetIconActive {
@@ -59,140 +53,17 @@
   animation: animateLiveSnippetIconInactive 0.5s ease-in-out forwards;
 }
 
-.liveSnippetActive {
-  fill: #6638b8;
-  transition: fill 1s;
-}
-
 .snippetButton:active {
   transform: scale(0.95);
 }
 
-[data-theme='dark'] .snippetButton:hover {
-  background: #9b7cd6;
-}
-
-[data-theme='dark'] .liveSnippet {
-  fill: white;
-}
-
-[data-theme='light'] .liveSnippet {
-  fill: black;
-}
-
-[data-theme='light'] .snippetButtonActive {
-  color: #6638b8;
-  border: none;
-  border-radius: 20px;
-  padding: 0.5rem;
-}
-
-[data-theme='dark'] .snippetButtonActive {
-  color: #6638b8;
-  border: none;
-  border-radius: 20px;
-  padding: 0.5rem;
-}
-
-[data-theme='light'] .snippetButtonInactive {
-  color: #6638b8;
-  border: none;
-  border-radius: 20px;
-  padding: 0.5rem;
-}
-
-[data-theme='dark'] .snippetButtonInactive {
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 0.5rem;
-}
-
+/* The background colour of the button when the modal is open */
 [data-theme='dark'] .snippetButtonModalOpen {
   background: #9368dd;
 }
 
-[data-theme='dark'] .snippetButtonModalOpen:hover {
-  background: #9b7cd6;
-}
-
 [data-theme='light'] .snippetButtonModalOpen {
   background: #e4dcef;
-}
-
-[data-theme='light'] .snippetButtonModalOpen:hover {
-  background: #e8e3f0;
-}
-
-.modal {
-  transition: opacity 0.15s;
-  opacity: 1;
-}
-
-.modalHide {
-  transition: opacity 0.15s;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.modalContents {
-  padding: 25px;
-}
-
-.header {
-  /* color: #828890; */
-  color: var(--ifm-color-primary-darker);
-  display: flex;
-  justify-content: space-between;
-}
-
-.subHeader {
-  color: var(--ifm-menu-color);
-  font-weight: 100;
-}
-
-.inputWrapper {
-  display: flex;
-  flex-direction: column;
-  margin-top: 20px;
-}
-
-.inputBox {
-  border: 1px solid #828890;
-  border-radius: 5px;
-  padding: 10px;
-  font-size: 1em;
-  margin-bottom: 10px;
-}
-
-.closeButton {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: #828890;
-  font-size: 1.5em;
-  width: 30px;
-  transform: translate(0.7em, -0.6em);
-}
-
-#collectorEndpointInputWrapper {
-  width: 100%;
-  position: relative;
-}
-
-#collectorEndpointInput {
-  width: 100%;
-  position: relative;
-}
-
-#collectorUrlStatus {
-  position: absolute;
-  right: 0;
-  top: 0;
-  transform: translate(-0.75em, 1em) scale(2);
-  line-height: 75%;
-  background-color: var(--ifm-navbar-background-color);
-  padding-left: 5px;
 }
 
 .successAlert {
