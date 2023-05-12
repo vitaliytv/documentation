@@ -36,7 +36,7 @@ const isValidUrl = (s: string) => {
   }
 }
 
-const getCollectorEndpointError = (url: string) => {
+const getCollectorEndpointError = (url: string): string => {
   if (url === '') {
     return 'Required'
   } else if (!isValidUrl(url)) {
@@ -46,12 +46,68 @@ const getCollectorEndpointError = (url: string) => {
   }
 }
 
-const getAppIdError = (appId: string) => {
+const getAppIdError = (appId: string): string => {
   if (appId === '') {
     return 'Required'
   } else {
     return ''
   }
+}
+
+type ModalState = {
+  value: string
+  error: string
+  disabled: boolean
+}
+
+type ModalInput = {
+  cookieName: string
+  inputRef: React.RefObject<HTMLInputElement>
+  state: ModalState
+  setState: React.Dispatch<React.SetStateAction<ModalState>>
+  clear: () => void
+  setCookie: () => void
+  clearCookie: () => void
+  getError: () => string
+}
+
+const clearModalInput = (input: ModalInput) => {
+  input.setState({
+    value: '',
+    error: '',
+    disabled: false,
+  })
+  input.clearCookie()
+}
+
+const setCookie = (input: ModalInput) =>
+  (document.cookie = `${input.cookieName}=${input.state.value}; path=/;`)
+
+const clearCookie = (input: ModalInput) =>
+  (document.cookie = `${input.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`)
+
+const createModalInput = (
+  cookieName: string,
+  getError: (val: string) => string
+): ModalInput => {
+  const [state, setState] = React.useState<ModalState>({
+    value: getCookie(cookieName),
+    error: '',
+    disabled: getCookie(cookieName) !== '',
+  })
+
+  let ret: ModalInput = {
+    cookieName,
+    inputRef: React.useRef<HTMLInputElement>(null),
+    state,
+    setState,
+    clear: () => clearModalInput(ret),
+    setCookie: () => setCookie(ret),
+    clearCookie: () => clearCookie(ret),
+    getError: () => getError(ret.state.value),
+  }
+
+  return ret
 }
 
 export function LiveSnippetModal(props: {
@@ -60,19 +116,12 @@ export function LiveSnippetModal(props: {
   handleClose: () => void
   setEnabled: (enabled: boolean) => void
 }) {
-  const [collectorEndpoint, setCollectorEndpoint] = React.useState(
-    getCookie('collectorEndpoint')
+  const collector = createModalInput(
+    'collectorEndpoint',
+    getCollectorEndpointError
   )
-  const [appId, setAppId] = React.useState(getCookie('appId'))
-  const [collectorEndpointError, setCollectorEndpointError] = React.useState('')
-  const [appIdError, setAppIdError] = React.useState('')
-  const [collectorEndpointInputDisabled, setCollectorEndpointInputDisabled] =
-    React.useState(collectorEndpoint !== '')
-  const [appIdInputDisabled, setAppIdInputDisabled] = React.useState(
-    appId !== ''
-  )
-  const appIdInputRef = React.useRef<HTMLInputElement>(null)
-  const collectorEndpointInputRef = React.useRef<HTMLInputElement>(null)
+
+  const appId = createModalInput('appId', getAppIdError)
 
   return (
     <Popover
@@ -119,29 +168,28 @@ export function LiveSnippetModal(props: {
               </Typography>
 
               <TextField
-                ref={collectorEndpointInputRef}
-                disabled={collectorEndpointInputDisabled}
+                ref={collector.inputRef}
+                disabled={collector.state.disabled}
                 sx={{ m: 1, mx: 0 }}
                 variant="outlined"
                 fullWidth
-                value={collectorEndpoint}
+                value={collector.state.value}
                 onChange={(e) => {
-                  setCollectorEndpoint(e.target.value)
+                  collector.setState({
+                    ...collector.state,
+                    value: e.target.value,
+                  })
                 }}
                 label={'Collector endpoint'}
-                error={Boolean(collectorEndpointError)}
-                helperText={collectorEndpointError}
+                error={Boolean(collector.state.error)}
+                helperText={collector.state.error}
                 InputProps={{
-                  endAdornment: collectorEndpointInputDisabled && (
+                  endAdornment: collector.state.disabled && (
                     <InputAdornment position="end">
                       <IconButton
                         edge="end"
                         onClick={() => {
-                          setCollectorEndpointInputDisabled(false)
-                          document.cookie =
-                            'collectorEndpoint=; Max-Age=0; SameSite=Strict'
-                          setCollectorEndpoint('')
-                          setCollectorEndpointError('')
+                          collector.clear()
                           props.setEnabled(false)
                         }}
                       >
@@ -154,27 +202,29 @@ export function LiveSnippetModal(props: {
             </div>
 
             <TextField
-              ref={appIdInputRef}
-              disabled={appIdInputDisabled}
+              ref={appId.inputRef}
+              disabled={appId.state.disabled}
               sx={{ m: 1, mx: 0 }}
               margin="normal"
               fullWidth
-              value={appId}
-              onChange={(e) => setAppId(e.target.value)}
+              value={appId.state.value}
+              onChange={(e) => {
+                appId.setState({
+                  ...appId.state,
+                  value: e.target.value,
+                })
+              }}
               className={styles.inputBox}
               label="App ID"
-              error={Boolean(appIdError)}
-              helperText={appIdError}
+              error={Boolean(appId.state.error)}
+              helperText={appId.state.error}
               InputProps={{
-                endAdornment: appIdInputDisabled && (
+                endAdornment: appId.state.disabled && (
                   <InputAdornment position="end">
                     <IconButton
                       edge="end"
                       onClick={() => {
-                        setAppIdInputDisabled(false)
-                        document.cookie = 'appId=; Max-Age=0; SameSite=Strict'
-                        setAppId('')
-                        setAppIdError('')
+                        appId.clear()
                         props.setEnabled(false)
                       }}
                     >
@@ -192,27 +242,44 @@ export function LiveSnippetModal(props: {
               }}
             >
               <Button
-                disabled={collectorEndpointInputDisabled && appIdInputDisabled}
+                disabled={collector.state.disabled && appId.state.disabled}
                 sx={{ ml: 1 }}
                 variant="contained"
                 onClick={() => {
                   // Validate the inputs
-                  const collectorEndpointError =
-                    getCollectorEndpointError(collectorEndpoint)
-                  const appIdError = getAppIdError(appId)
+                  const collectorEndpointError = collector.getError()
+                  const appIdError = appId.getError()
 
                   if (collectorEndpointError === '' && appIdError === '') {
                     // Save the states to cookies
-                    document.cookie = `collectorEndpoint=${collectorEndpoint}; SameSite=Strict`
-                    document.cookie = `appId=${appId}; SameSite=Strict`
+                    collector.setCookie()
+
+                    collector.setState({
+                      ...collector.state,
+                      error: collectorEndpointError,
+                      disabled: true,
+                    })
+
+                    appId.setCookie()
+                    appId.setState({
+                      ...appId.state,
+                      error: appIdError,
+                      disabled: true,
+                    })
+
                     props.setEnabled(true)
-                    setCollectorEndpointInputDisabled(true)
-                    setAppIdInputDisabled(true)
+                    props.setShowSuccessAlert(true)
+                  } else {
+                    collector.setState({
+                      ...collector.state,
+                      error: collectorEndpointError,
+                    })
+
+                    appId.setState({
+                      ...appId.state,
+                      error: appIdError,
+                    })
                   }
-                  // Set the error messages either way, as we may need to clear them
-                  // from a previous error if the input is now valid
-                  setCollectorEndpointError(collectorEndpointError)
-                  setAppIdError(appIdError)
                 }}
               >
                 Save
