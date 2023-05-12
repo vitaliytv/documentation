@@ -77,10 +77,22 @@ export function LiveSnippetModal(props: {
 
   return (
     <Popover
-      sx={{ top: '40px' }}
+      // We need to anchor to the middle and offset with top: 20px
+      // as the default anchorOrigin will cause the popover to shift slightly
+      // when the button animates
+      sx={{ top: '20px' }}
+      anchorOrigin={{
+        vertical: 'center',
+        horizontal: 'center',
+      }}
+      disableScrollLock={true}
       open={Boolean(props.anchorEl)}
       anchorEl={props.anchorEl}
       onClose={props.handleClose}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
     >
       <Card sx={{ p: 3 }} className={styles.liveSnippetModal}>
         <CardContent sx={{ p: 1 }}>
