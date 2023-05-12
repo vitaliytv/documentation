@@ -1,5 +1,4 @@
 import React from 'react'
-import styles from './styles.module.css'
 import {
   Button,
   TextField,
@@ -11,6 +10,8 @@ import {
   IconButton,
 } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
+
+import styles from './styles.module.css'
 
 const isValidUrl = (s: string) => {
   // Don't error if empty
@@ -57,7 +58,7 @@ type ModalInput = {
   setState: React.Dispatch<React.SetStateAction<ModalState>>
   clear: () => void
   save: () => void
-  remove: () => void
+  delete: () => void
   getError: () => string
 }
 
@@ -67,27 +68,27 @@ const clearModalInput = (input: ModalInput) => {
     error: '',
     disabled: false,
   })
-  input.remove()
+  input.delete()
 }
 
 const createModalInput = (
-  cookieName: string,
+  name: string,
   getError: (val: string) => string
 ): ModalInput => {
   const [state, setState] = React.useState<ModalState>({
-    value: localStorage.getItem(cookieName) || '',
+    value: localStorage.getItem(name) || '',
     error: '',
-    disabled: Boolean(localStorage.getItem(cookieName)),
+    disabled: Boolean(localStorage.getItem(name)),
   })
 
   let ret: ModalInput = {
-    cookieName,
+    cookieName: name,
     inputRef: React.useRef<HTMLInputElement>(null),
     state,
     setState,
     clear: () => clearModalInput(ret),
     save: () => localStorage.setItem(ret.cookieName, ret.state.value),
-    remove: () => localStorage.removeItem(ret.cookieName),
+    delete: () => localStorage.removeItem(ret.cookieName),
     getError: () => getError(ret.state.value),
   }
 
