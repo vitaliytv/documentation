@@ -55,8 +55,7 @@ const getAppIdError = (appId: string) => {
 }
 
 export function LiveSnippetModal(props: {
-  showModal: boolean
-  setShowSuccess: (show: boolean) => void
+  setShowSuccessAlert: (show: boolean) => void
   anchorEl: any
   handleClose: () => void
   setEnabled: (enabled: boolean) => void
@@ -193,6 +192,7 @@ export function LiveSnippetModal(props: {
               }}
             >
               <Button
+                disabled={collectorEndpointInputDisabled && appIdInputDisabled}
                 sx={{ ml: 1 }}
                 variant="contained"
                 onClick={() => {
@@ -206,14 +206,12 @@ export function LiveSnippetModal(props: {
                     document.cookie = `collectorEndpoint=${collectorEndpoint}; SameSite=Strict`
                     document.cookie = `appId=${appId}; SameSite=Strict`
                     props.setEnabled(true)
-                    props.setShowSuccess(true)
                     setCollectorEndpointInputDisabled(true)
                     setAppIdInputDisabled(true)
                   }
                   // Set the error messages either way, as we may need to clear them
                   // from a previous error if the input is now valid
                   setCollectorEndpointError(collectorEndpointError)
-
                   setAppIdError(appIdError)
                 }}
               >

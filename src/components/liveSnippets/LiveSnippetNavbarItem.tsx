@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { LiveSnippetModal } from './LiveSnippetModal'
 import styles from './styles.module.css'
 import FlashOnIcon from '@mui/icons-material/FlashOnRounded'
@@ -23,7 +23,11 @@ const successAlert = (show, onClose) => {
         className={styles.successAlert}
       >
         <AlertTitle>Live Snippets Enabled 🎉</AlertTitle>
-        Events will be sent to{' '}
+        Events with App ID{' '}
+        <span className={styles.successAlertCollectorUrl}>
+          {getCookie('appId')}
+        </span>{' '}
+        will be sent to{' '}
         <span className={styles.successAlertCollectorUrl}>
           {getCookie('collectorEndpoint')}
         </span>
@@ -38,9 +42,25 @@ const liveSnippetsEnabled = () =>
 export default function LiveSnippetNavbarItem(props: {
   mobile?: boolean
 }): JSX.Element {
-  const [showModal, setShowModal] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [enabled, setEnabled] = React.useState(liveSnippetsEnabled())
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutation) => {
+      for (const mut of mutation) {
+        if (
+          mut.type === 'attributes' &&
+          (mut.target as any).classList.contains('DocSearch--active')
+        ) {
+          handleClose()
+        }
+      }
+    })
+
+    observer.observe(document.body, {
+      attributes: true,
+    })
+  }, [])
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -50,10 +70,10 @@ export default function LiveSnippetNavbarItem(props: {
     setAnchorEl(null)
   }
 
-  const [open, setOpen] = React.useState(false)
+  const [openSuccessAlert, setShowSuccessAlert] = React.useState(false)
 
   const handleAlertClick = () => {
-    setOpen(true)
+    setShowSuccessAlert(true)
   }
 
   const handleAlertClose = (
@@ -64,7 +84,7 @@ export default function LiveSnippetNavbarItem(props: {
       return
     }
 
-    setOpen(false)
+    setShowSuccessAlert(false)
   }
 
   return (
@@ -92,7 +112,6 @@ export default function LiveSnippetNavbarItem(props: {
         }
         `}
         onClick={(e) => {
-          setShowModal(!showModal)
           handleClick(e)
         }}
       >
@@ -101,14 +120,13 @@ export default function LiveSnippetNavbarItem(props: {
 
       {anchorEl && (
         <LiveSnippetModal
-          showModal={enabled}
-          setShowSuccess={setOpen}
+          setShowSuccessAlert={setShowSuccessAlert}
           anchorEl={anchorEl}
           handleClose={handleClose}
           setEnabled={setEnabled}
         />
       )}
-      {successAlert(open, handleAlertClose)}
+      {successAlert(openSuccessAlert, handleAlertClose)}
     </>
   )
 }
