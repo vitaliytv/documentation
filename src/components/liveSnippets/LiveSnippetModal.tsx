@@ -13,15 +13,6 @@ import {
 } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
 
-const getCookie = (name: string) => {
-  return (
-    document.cookie
-      .split('; ')
-      .find((row) => row.startsWith(name))
-      ?.split('=')[1] || ''
-  )
-}
-
 const isValidUrl = (s: string) => {
   // Don't error if empty
   if (s === '') {
@@ -66,8 +57,8 @@ type ModalInput = {
   state: ModalState
   setState: React.Dispatch<React.SetStateAction<ModalState>>
   clear: () => void
-  setCookie: () => void
-  clearCookie: () => void
+  save: () => void
+  remove: () => void
   getError: () => string
 }
 
@@ -77,23 +68,17 @@ const clearModalInput = (input: ModalInput) => {
     error: '',
     disabled: false,
   })
-  input.clearCookie()
+  input.remove()
 }
-
-const setCookie = (input: ModalInput) =>
-  (document.cookie = `${input.cookieName}=${input.state.value}; path=/;`)
-
-const clearCookie = (input: ModalInput) =>
-  (document.cookie = `${input.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`)
 
 const createModalInput = (
   cookieName: string,
   getError: (val: string) => string
 ): ModalInput => {
   const [state, setState] = React.useState<ModalState>({
-    value: getCookie(cookieName),
+    value: localStorage.getItem(cookieName) || '',
     error: '',
-    disabled: getCookie(cookieName) !== '',
+    disabled: Boolean(localStorage.getItem(cookieName)),
   })
 
   let ret: ModalInput = {
@@ -102,8 +87,8 @@ const createModalInput = (
     state,
     setState,
     clear: () => clearModalInput(ret),
-    setCookie: () => setCookie(ret),
-    clearCookie: () => clearCookie(ret),
+    save: () => localStorage.setItem(ret.cookieName, ret.state.value),
+    remove: () => localStorage.removeItem(ret.cookieName),
     getError: () => getError(ret.state.value),
   }
 
@@ -252,7 +237,7 @@ export function LiveSnippetModal(props: {
 
                   if (collectorEndpointError === '' && appIdError === '') {
                     // Save the states to cookies
-                    collector.setCookie()
+                    collector.save()
 
                     collector.setState({
                       ...collector.state,
@@ -260,7 +245,7 @@ export function LiveSnippetModal(props: {
                       disabled: true,
                     })
 
-                    appId.setCookie()
+                    appId.save()
                     appId.setState({
                       ...appId.state,
                       error: appIdError,

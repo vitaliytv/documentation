@@ -4,15 +4,6 @@ import styles from './styles.module.css'
 import FlashOnIcon from '@mui/icons-material/FlashOnRounded'
 import { Alert, AlertTitle, IconButton, Snackbar } from '@mui/material'
 
-const getCookie = (name: string) => {
-  return (
-    document.cookie
-      .split('; ')
-      .find((row) => row.startsWith(name))
-      ?.split('=')[1] || ''
-  )
-}
-
 const successAlert = (show, onClose) => {
   return (
     <Snackbar open={show} autoHideDuration={5000} onClose={onClose}>
@@ -25,11 +16,11 @@ const successAlert = (show, onClose) => {
         <AlertTitle>Live Snippets Enabled 🎉</AlertTitle>
         Events with App ID{' '}
         <span className={styles.successAlertCollectorUrl}>
-          {getCookie('appId')}
+          {localStorage.getItem('appId')}
         </span>{' '}
         will be sent to{' '}
         <span className={styles.successAlertCollectorUrl}>
-          {getCookie('collectorEndpoint')}
+          {localStorage.getItem('collectorEndpoint')}
         </span>
       </Alert>
     </Snackbar>
@@ -37,7 +28,9 @@ const successAlert = (show, onClose) => {
 }
 
 const liveSnippetsEnabled = () =>
-  getCookie('collectorEndpoint') !== '' && getCookie('appId') !== ''
+  Boolean(
+    localStorage.getItem('collectorEndpoint') && localStorage.getItem('appId')
+  )
 
 export default function LiveSnippetNavbarItem(props: {
   mobile?: boolean
