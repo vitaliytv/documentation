@@ -160,10 +160,10 @@ export function LiveSnippetModal(props: {
                 fullWidth
                 value={collector.state.value}
                 onChange={(e) => {
-                  collector.setState({
-                    ...collector.state,
+                  collector.setState((prev) => ({
+                    ...prev,
                     value: e.target.value,
-                  })
+                  }))
                 }}
                 label={'Collector endpoint'}
                 error={Boolean(collector.state.error)}
@@ -194,10 +194,10 @@ export function LiveSnippetModal(props: {
               fullWidth
               value={appId.state.value}
               onChange={(e) => {
-                appId.setState({
-                  ...appId.state,
+                appId.setState((prev) => ({
+                  ...prev,
                   value: e.target.value,
-                })
+                }))
               }}
               className={styles.inputBox}
               label="App ID"
@@ -239,31 +239,29 @@ export function LiveSnippetModal(props: {
                     // Save the states to cookies
                     collector.save()
 
-                    collector.setState({
-                      ...collector.state,
-                      error: collectorEndpointError,
+                    collector.setState((prev) => ({
+                      ...prev,
                       disabled: true,
-                    })
+                    }))
 
                     appId.save()
-                    appId.setState({
-                      ...appId.state,
-                      error: appIdError,
+                    appId.setState((prev) => ({
+                      ...prev,
                       disabled: true,
-                    })
+                    }))
 
                     props.setEnabled(true)
                     props.setShowSuccessAlert(true)
                   } else {
-                    collector.setState({
-                      ...collector.state,
+                    collector.setState((prev) => ({
+                      ...prev,
                       error: collectorEndpointError,
-                    })
+                    }))
 
-                    appId.setState({
-                      ...appId.state,
+                    appId.setState((prev) => ({
+                      ...prev,
                       error: appIdError,
-                    })
+                    }))
                   }
                 }}
               >
