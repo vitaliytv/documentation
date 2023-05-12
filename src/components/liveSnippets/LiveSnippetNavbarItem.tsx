@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
+import { Alert, AlertTitle, IconButton, Snackbar } from '@mui/material'
+import FlashOnIcon from '@mui/icons-material/FlashOnRounded'
+
 import { LiveSnippetModal } from './LiveSnippetModal'
 import styles from './styles.module.css'
-import FlashOnIcon from '@mui/icons-material/FlashOnRounded'
-import { Alert, AlertTitle, IconButton, Snackbar } from '@mui/material'
 
 const successAlert = (show, onClose) => {
   return (
