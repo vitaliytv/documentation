@@ -9,7 +9,6 @@ import {
   Popover,
   InputAdornment,
   IconButton,
-  Unstable_TrapFocus,
 } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
 
