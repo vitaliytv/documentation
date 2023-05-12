@@ -9,8 +9,9 @@ import {
   Popover,
   InputAdornment,
   IconButton,
+  Unstable_TrapFocus,
 } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
+import ClearIcon from '@mui/icons-material/Clear'
 
 const getCookie = (name: string) => {
   return (
@@ -71,6 +72,8 @@ export function LiveSnippetModal(props: {
   const [appIdInputDisabled, setAppIdInputDisabled] = React.useState(
     appId !== ''
   )
+  const appIdInputRef = React.useRef<HTMLInputElement>(null)
+  const collectorEndpointInputRef = React.useRef<HTMLInputElement>(null)
 
   return (
     <Popover
@@ -105,6 +108,7 @@ export function LiveSnippetModal(props: {
               </Typography>
 
               <TextField
+                ref={collectorEndpointInputRef}
                 disabled={collectorEndpointInputDisabled}
                 sx={{ m: 1, mx: 0 }}
                 variant="outlined"
@@ -121,9 +125,16 @@ export function LiveSnippetModal(props: {
                     <InputAdornment position="end">
                       <IconButton
                         edge="end"
-                        onClick={() => setCollectorEndpointInputDisabled(false)}
+                        onClick={() => {
+                          setCollectorEndpointInputDisabled(false)
+                          document.cookie =
+                            'collectorEndpoint=; Max-Age=0; SameSite=Strict'
+                          setCollectorEndpoint('')
+                          setCollectorEndpointError('')
+                          props.setEnabled(false)
+                        }}
                       >
-                        <EditIcon />
+                        <ClearIcon />
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -132,6 +143,7 @@ export function LiveSnippetModal(props: {
             </div>
 
             <TextField
+              ref={appIdInputRef}
               disabled={appIdInputDisabled}
               sx={{ m: 1, mx: 0 }}
               margin="normal"
@@ -147,9 +159,15 @@ export function LiveSnippetModal(props: {
                   <InputAdornment position="end">
                     <IconButton
                       edge="end"
-                      onClick={() => setAppIdInputDisabled(false)}
+                      onClick={() => {
+                        setAppIdInputDisabled(false)
+                        document.cookie = 'appId=; Max-Age=0; SameSite=Strict'
+                        setAppId('')
+                        setAppIdError('')
+                        props.setEnabled(false)
+                      }}
                     >
-                      <EditIcon />
+                      <ClearIcon />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -162,23 +180,6 @@ export function LiveSnippetModal(props: {
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  document.cookie =
-                    'collectorEndpoint=; Max-Age=0; SameSite=Strict'
-                  setCollectorEndpoint('')
-                  setCollectorEndpointError('')
-
-                  document.cookie = 'appId=; Max-Age=0; SameSite=Strict'
-                  setAppId('')
-                  setAppIdError('')
-
-                  props.setEnabled(false)
-                }}
-              >
-                Clear
-              </Button>
               <Button
                 sx={{ ml: 1 }}
                 variant="contained"
