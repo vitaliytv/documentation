@@ -6,7 +6,7 @@ sidebar_position: 1000
 
 ```mdx-code-block
 import Block5966 from "@site/docs/reusable/javascript-tracker-release-badge-v3/_index.md"
-import {JavaScriptTrackerExecutable, UserTracker} from "/src/components/jsTracker/main.js"
+import {JavaScriptTrackerExecutable} from "/src/components/liveSnippets/main.tsx"
 
 <Block5966/>
 ```
