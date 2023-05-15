@@ -5,6 +5,7 @@ const sidebar = require('./sidebars')
 const abbreviations = require('./src/remark/abbreviations')
 const math = require('remark-math')
 const katex = require('rehype-katex')
+const webpack = require('webpack')
 
 /** @type {import('@docusaurus/types').Config} */
 module.exports = {
@@ -60,6 +61,29 @@ module.exports = {
   markdown: {
     mermaid: true,
   },
+    plugins: [
+      async function webpackConfig(context, options) {
+        return {
+          name: 'webpackConfig',
+          configureWebpack(config, isServer, utils) {
+            return {
+              plugins: [
+                new webpack.ProvidePlugin({
+                  process: require.resolve('process/browser'),
+                  Buffer: require.resolve('buffer'),
+                }),
+              ],
+            }
+          },
+        }
+      },
+    ],
+
+    clientModules: [
+      require.resolve('./cookieConsent.js'),
+      require.resolve('./snowplow.js'),
+      require.resolve('./google.js'),
+    ],
 
   themes: [
     '@saucelabs/theme-github-codeblock',
