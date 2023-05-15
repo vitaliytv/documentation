@@ -3,16 +3,9 @@
   top: 100%;
 }
 
-:root[data-theme='dark'] {
+:root {
   --snippet-active-fg-color: #fdca40;
   --snippet-active-bg-color: #6638b8;
-  --snippet-button-active-bg-color: #af98d5;
-}
-
-:root[data-theme='light'] {
-  --snippet-active-fg-color: #fdca40;
-  --snippet-active-bg-color: #7345c6;
-  --snippet-button-active-bg-color: #8064ac;
 }
 
 @keyframes animateLiveSnippetIconActive {
