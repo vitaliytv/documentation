@@ -95,6 +95,12 @@ const createModalInput = (
   return ret
 }
 
+declare global {
+  interface Window {
+    snowplow: any
+  }
+}
+
 export function LiveSnippetModal(props: {
   setShowSuccessAlert: (show: boolean) => void
   anchorEl: any
@@ -249,6 +255,16 @@ export function LiveSnippetModal(props: {
                       ...prev,
                       disabled: true,
                     }))
+
+                    window.snowplow(
+                      'newTracker',
+                      'snowplowLiveSnippet',
+                      collector.state.value,
+                      {
+                        appId: appId.state.value,
+                        buffer: 1,
+                      }
+                    )
 
                     props.setEnabled(true)
                     props.setShowSuccessAlert(true)
