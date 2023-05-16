@@ -68,12 +68,8 @@ export default function LiveSnippetNavbarItem(props: {
 
   const [openSuccessAlert, setShowSuccessAlert] = React.useState(false)
 
-  const handleAlertClick = () => {
-    setShowSuccessAlert(true)
-  }
-
   const handleAlertClose = (
-    event?: React.SyntheticEvent | Event,
+    _event?: React.SyntheticEvent | Event,
     reason?: string
   ) => {
     if (reason === 'clickaway') {
@@ -132,8 +128,8 @@ export default function LiveSnippetNavbarItem(props: {
         <LiveSnippetModal
           setShowSuccessAlert={setShowSuccessAlert}
           anchorEl={anchorEl}
-          handleClose={handleClose}
-          setEnabled={setEnabled}
+          handleModalClose={handleClose}
+          liveSnippetsEnabled={setEnabled}
         />
       )}
       {successAlert(openSuccessAlert, handleAlertClose)}

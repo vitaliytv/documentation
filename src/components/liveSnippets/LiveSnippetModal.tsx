@@ -111,8 +111,8 @@ declare global {
 export function LiveSnippetModal(props: {
   setShowSuccessAlert: (show: boolean) => void
   anchorEl: any
-  handleClose: () => void
-  setEnabled: (enabled: boolean) => void
+  handleModalClose: () => void
+  liveSnippetsEnabled: (enabled: boolean) => void
 }) {
   const collector = createModalInput(
     'collectorEndpoint',
@@ -134,7 +134,7 @@ export function LiveSnippetModal(props: {
       disableScrollLock={true}
       open={Boolean(props.anchorEl)}
       anchorEl={props.anchorEl}
-      onClose={props.handleClose}
+      onClose={props.handleModalClose}
       transformOrigin={{
         vertical: 'top',
         horizontal: 'center',
@@ -188,7 +188,7 @@ export function LiveSnippetModal(props: {
                         edge="end"
                         onClick={() => {
                           collector.clear()
-                          props.setEnabled(false)
+                          props.liveSnippetsEnabled(false)
                         }}
                       >
                         <ClearIcon />
@@ -223,7 +223,7 @@ export function LiveSnippetModal(props: {
                       edge="end"
                       onClick={() => {
                         appId.clear()
-                        props.setEnabled(false)
+                        props.liveSnippetsEnabled(false)
                       }}
                     >
                       <ClearIcon />
@@ -269,8 +269,8 @@ export function LiveSnippetModal(props: {
                       }
                     )
 
-                    props.setEnabled(true)
-                    props.handleClose()
+                    props.liveSnippetsEnabled(true)
+                    props.handleModalClose()
                     props.setShowSuccessAlert(true)
                   } else {
                     collector.setState((prev) => ({
