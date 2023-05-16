@@ -270,6 +270,7 @@ export function LiveSnippetModal(props: {
                     )
 
                     props.setEnabled(true)
+                    props.handleClose()
                     props.setShowSuccessAlert(true)
                   } else {
                     collector.setState((prev) => ({
