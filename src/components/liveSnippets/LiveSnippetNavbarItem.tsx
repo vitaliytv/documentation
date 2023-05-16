@@ -30,7 +30,9 @@ const successAlert = (show, onClose) => {
 
 const liveSnippetsEnabled = () =>
   Boolean(
-    localStorage.getItem('collectorEndpoint') && localStorage.getItem('appId')
+    localStorage.getItem('collectorEndpoint') &&
+      localStorage.getItem('appId') &&
+      localStorage.getItem('liveSnippetTrackerId')
   )
 
 export default function LiveSnippetNavbarItem(props: {
@@ -80,6 +82,20 @@ export default function LiveSnippetNavbarItem(props: {
 
     setShowSuccessAlert(false)
   }
+
+  useEffect(() => {
+    if (liveSnippetsEnabled) {
+      window.snowplow(
+        'newTracker',
+        'snowplowDocs-' + localStorage.getItem('liveSnippetTrackerId'),
+        localStorage.getItem('collectorEndpoint'),
+        {
+          appId: localStorage.getItem('appId'),
+          buffer: 1,
+        }
+      )
+    }
+  }, [])
 
   return (
     <>

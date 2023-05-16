@@ -1,4 +1,5 @@
 import React from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import {
   Button,
   TextField,
@@ -87,8 +88,14 @@ const createModalInput = (
     state,
     setState,
     clear: () => clearModalInput(ret),
-    save: () => localStorage.setItem(ret.cookieName, ret.state.value),
-    delete: () => localStorage.removeItem(ret.cookieName),
+    save: () => {
+      localStorage.setItem(ret.cookieName, ret.state.value)
+      setState((prev) => ({ ...prev, disabled: true, error: '' }))
+    },
+    delete: () => {
+      localStorage.removeItem(ret.cookieName)
+      setState((prev) => ({ ...prev, disabled: false, error: '' }))
+    },
     getError: () => getError(ret.state.value),
   }
 
@@ -242,23 +249,19 @@ export function LiveSnippetModal(props: {
                   const appIdError = appId.getError()
 
                   if (collectorEndpointError === '' && appIdError === '') {
-                    // Save the states to cookies
                     collector.save()
-
-                    collector.setState((prev) => ({
-                      ...prev,
-                      disabled: true,
-                    }))
-
                     appId.save()
-                    appId.setState((prev) => ({
-                      ...prev,
-                      disabled: true,
-                    }))
+
+                    // Create a unique id for this tracker
+                    // This allows the user to edit the Collector endpoint and App ID
+                    // as many times as they want, as we have to create a new tracker
+                    // every time they do so
+                    const uuid = uuidv4()
+                    localStorage.setItem('liveSnippetTrackerId', uuid)
 
                     window.snowplow(
                       'newTracker',
-                      'snowplowLiveSnippet',
+                      'snowplowDocs-' + uuid,
                       collector.state.value,
                       {
                         appId: appId.state.value,

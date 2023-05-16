@@ -11,11 +11,16 @@ export function JavaScriptTrackerExecutable(content) {
         <button
           className="button button--primary"
           onClick={() => {
-            let x = parseSnowplowJsTrackerMethod(content.children)
-            console.log(x)
+            const parsedSnowplowCall = parseSnowplowJsTrackerMethod(
+              content.children
+            )
+
+            const trackerNameSpace =
+              ':snowplowDocs-' + localStorage.getItem('liveSnippetTrackerId')
+
             window.snowplow(
-              x.method + window.localStorage.getItem('appId'),
-              x.args
+              parsedSnowplowCall.method + trackerNameSpace,
+              ...parsedSnowplowCall.args
             )
           }}
         >
