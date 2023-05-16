@@ -13,9 +13,10 @@ import {
 import ClearIcon from '@mui/icons-material/Clear'
 
 import styles from './styles.module.css'
+import { newTrackerFromAppIdAndCollectorUrl } from './trackerHelper'
 
 const isValidUrl = (s: string) => {
-  // Don't error if empty
+  // Don't error if empty string
   if (s === '') {
     return true
   }
@@ -46,20 +47,37 @@ const getAppIdError = (appId: string): string => {
   }
 }
 
+/*
+ * Represents the mutable state of a text input field on the modal
+ * @param value - the value of the text input
+ * @param error - the error message to display
+ * @param disabled - whether the text input is disabled
+ */
 type ModalState = {
   value: string
   error: string
   disabled: boolean
 }
 
+/*
+ * Represents a text input field on the modal
+ * @param fieldName - the name of the cookie to store the value in
+ * @param inputRef - a ref to the text input, used to focus the input when the field is cleared
+ * @param state - the state of the modal
+ * @param setState - a function to update the state of the modal
+ * @param clear - Clears the text input, sets the error to empty, removes from localStorage, and enables the text input
+ * @param save - Saves the text input, sets the error to empty, adds to localStorage, and disables the text input
+ * @param delete - Deletes the text input, sets the error to empty, removes from localStorage, and enables the text input
+ * @param getError - Returns the error message for the text input
+ */
 type ModalInput = {
-  cookieName: string
+  fieldName: 'appId' | 'collectorEndpoint'
   inputRef: React.RefObject<HTMLInputElement>
   state: ModalState
   setState: React.Dispatch<React.SetStateAction<ModalState>>
   clear: () => void
-  save: () => void
-  delete: () => void
+  saveToStorage: () => void
+  removeFromStorage: () => void
   getError: () => string
 }
 
@@ -69,31 +87,37 @@ const clearModalInput = (input: ModalInput) => {
     error: '',
     disabled: false,
   })
-  input.delete()
+  input.removeFromStorage()
 }
 
+/*
+ * Creates a ModalInput object that can be used to create a modal input
+ * @param name - the name of the input (e.g. collectorEndpoint or appId)
+ * @param getError - a function that takes in the value of the input and returns an error string
+ * @returns a ModalInput object
+ */
 const createModalInput = (
-  name: string,
+  fieldName: 'appId' | 'collectorEndpoint',
   getError: (val: string) => string
 ): ModalInput => {
   const [state, setState] = React.useState<ModalState>({
-    value: localStorage.getItem(name) || '',
+    value: localStorage.getItem(fieldName) || '',
     error: '',
-    disabled: Boolean(localStorage.getItem(name)),
+    disabled: Boolean(localStorage.getItem(fieldName)),
   })
 
   let ret: ModalInput = {
-    cookieName: name,
+    fieldName,
     inputRef: React.useRef<HTMLInputElement>(null),
     state,
     setState,
     clear: () => clearModalInput(ret),
-    save: () => {
-      localStorage.setItem(ret.cookieName, ret.state.value)
+    saveToStorage: () => {
+      localStorage.setItem(ret.fieldName, ret.state.value)
       setState((prev) => ({ ...prev, disabled: true, error: '' }))
     },
-    delete: () => {
-      localStorage.removeItem(ret.cookieName)
+    removeFromStorage: () => {
+      localStorage.removeItem(ret.fieldName)
       setState((prev) => ({ ...prev, disabled: false, error: '' }))
     },
     getError: () => getError(ret.state.value),
@@ -102,6 +126,9 @@ const createModalInput = (
   return ret
 }
 
+/*
+ * Set the global namespace for snowplow so typescript doesn't complain
+ */
 declare global {
   interface Window {
     snowplow: any
@@ -112,7 +139,7 @@ export function LiveSnippetModal(props: {
   setShowSuccessAlert: (show: boolean) => void
   anchorEl: any
   handleModalClose: () => void
-  liveSnippetsEnabled: (enabled: boolean) => void
+  setLiveSnippetsEnabled: (enabled: boolean) => void
 }) {
   const collector = createModalInput(
     'collectorEndpoint',
@@ -188,7 +215,7 @@ export function LiveSnippetModal(props: {
                         edge="end"
                         onClick={() => {
                           collector.clear()
-                          props.liveSnippetsEnabled(false)
+                          props.setLiveSnippetsEnabled(false)
                         }}
                       >
                         <ClearIcon />
@@ -223,7 +250,7 @@ export function LiveSnippetModal(props: {
                       edge="end"
                       onClick={() => {
                         appId.clear()
-                        props.liveSnippetsEnabled(false)
+                        props.setLiveSnippetsEnabled(false)
                       }}
                     >
                       <ClearIcon />
@@ -249,27 +276,15 @@ export function LiveSnippetModal(props: {
                   const appIdError = appId.getError()
 
                   if (collectorEndpointError === '' && appIdError === '') {
-                    collector.save()
-                    appId.save()
+                    collector.saveToStorage()
+                    appId.saveToStorage()
 
-                    // Create a unique id for this tracker
-                    // This allows the user to edit the Collector endpoint and App ID
-                    // as many times as they want, as we have to create a new tracker
-                    // every time they do so
-                    const uuid = uuidv4()
-                    localStorage.setItem('liveSnippetTrackerId', uuid)
-
-                    window.snowplow(
-                      'newTracker',
-                      'snowplowDocs-' + uuid,
-                      collector.state.value,
-                      {
-                        appId: appId.state.value,
-                        buffer: 1,
-                      }
+                    newTrackerFromAppIdAndCollectorUrl(
+                      appId.state.value,
+                      collector.state.value
                     )
 
-                    props.liveSnippetsEnabled(true)
+                    props.setLiveSnippetsEnabled(true)
                     props.handleModalClose()
                     props.setShowSuccessAlert(true)
                   } else {

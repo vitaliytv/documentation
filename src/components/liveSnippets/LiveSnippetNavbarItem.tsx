@@ -5,6 +5,11 @@ import FlashOnIcon from '@mui/icons-material/FlashOnRounded'
 import { LiveSnippetModal } from './LiveSnippetModal'
 import styles from './styles.module.css'
 
+import {
+  liveSnippetsEnabled,
+  newTrackerFromLocalStorageOptions,
+} from './trackerHelper'
+
 const successAlert = (show, onClose) => {
   return (
     <Snackbar open={show} autoHideDuration={5000} onClose={onClose}>
@@ -27,13 +32,6 @@ const successAlert = (show, onClose) => {
     </Snackbar>
   )
 }
-
-const liveSnippetsEnabled = () =>
-  Boolean(
-    localStorage.getItem('collectorEndpoint') &&
-      localStorage.getItem('appId') &&
-      localStorage.getItem('liveSnippetTrackerId')
-  )
 
 export default function LiveSnippetNavbarItem(props: {
   mobile?: boolean
@@ -80,16 +78,8 @@ export default function LiveSnippetNavbarItem(props: {
   }
 
   useEffect(() => {
-    if (liveSnippetsEnabled) {
-      window.snowplow(
-        'newTracker',
-        'snowplowDocs-' + localStorage.getItem('liveSnippetTrackerId'),
-        localStorage.getItem('collectorEndpoint'),
-        {
-          appId: localStorage.getItem('appId'),
-          buffer: 1,
-        }
-      )
+    if (liveSnippetsEnabled()) {
+      newTrackerFromLocalStorageOptions()
     }
   }, [])
 
@@ -129,7 +119,7 @@ export default function LiveSnippetNavbarItem(props: {
           setShowSuccessAlert={setShowSuccessAlert}
           anchorEl={anchorEl}
           handleModalClose={handleClose}
-          liveSnippetsEnabled={setEnabled}
+          setLiveSnippetsEnabled={setEnabled}
         />
       )}
       {successAlert(openSuccessAlert, handleAlertClose)}

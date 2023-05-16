@@ -2,6 +2,7 @@ import React from 'react'
 import CodeBlock from '@theme/CodeBlock'
 
 import { parseSnowplowJsTrackerMethod } from './walker'
+import { getLiveSnippetNamespace } from './trackerHelper'
 
 export function JavaScriptTrackerExecutable(content) {
   return (
@@ -15,11 +16,16 @@ export function JavaScriptTrackerExecutable(content) {
               content.children
             )
 
-            const trackerNameSpace =
-              ':snowplowDocs-' + localStorage.getItem('liveSnippetTrackerId')
+            const namespace = getLiveSnippetNamespace()
+            if (namespace === null) {
+              console.error(
+                'Namespace not set for live snippet tracker. If this happens, please file a bug report.'
+              )
+              return
+            }
 
             window.snowplow(
-              parsedSnowplowCall.method + trackerNameSpace,
+              parsedSnowplowCall.method + ':' + getLiveSnippetNamespace(),
               ...parsedSnowplowCall.args
             )
           }}
