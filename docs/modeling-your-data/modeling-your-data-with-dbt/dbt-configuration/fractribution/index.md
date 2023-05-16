@@ -1,6 +1,6 @@
 ---
 title: "Fractribution"
-sidebar_position: 106
+sidebar_position: 107
 ---
 
 ## Package Configuration Variables
@@ -14,7 +14,7 @@ All variables in Snowplow packages start with `snowplow__` but we have removed t
 :::
 
 
-### Warehouse and tracker 
+### Warehouse and tracker
 | Variable Name            | Description                                                                               | Default                                              |
 | ------------------------ | ----------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `page_views_source`      | The source (schema and table) of the derived snowplow_web_page_views table                | `{{ source('derived', 'snowplow_web_page_views') }}` |
