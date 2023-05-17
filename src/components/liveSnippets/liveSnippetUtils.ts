@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
+import { parseSnowplowJsTrackerMethod } from './walker'
 
 export const LIVE_SNIPPET_TRACKER_PREFIX = 'snowplowDocs-'
 /*
@@ -119,4 +120,32 @@ export function newTrackerFromAppIdAndCollectorUrl(
       buffer: 1,
     }
   )
+}
+
+/*
+ * Attempts to parse and run the given code as a Snowplow JS tracker method
+ * In future, we can make this a bit more generic as we add support for other languages,
+ * but for now, this is fine
+ * @param code - the code to parse and run
+ */
+export function runSnippet(code: string) {
+  const parsedSnowplowCall = parseSnowplowJsTrackerMethod(code)
+
+  const namespace = getLiveSnippetNamespace()
+  if (namespace === null) {
+    console.error(
+      'Namespace not set for live snippet tracker. If this happens, please file a bug report.'
+    )
+    return
+  }
+
+  window.snowplow(
+    parsedSnowplowCall.method + ':' + getLiveSnippetNamespace(),
+    ...parsedSnowplowCall.args
+  )
+}
+
+const runnableRegex = /runnable/
+export function parseRunnable(metastring?: string): boolean {
+  return runnableRegex.test(metastring)
 }

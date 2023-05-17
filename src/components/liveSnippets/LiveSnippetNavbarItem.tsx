@@ -8,7 +8,7 @@ import styles from './styles.module.css'
 import {
   liveSnippetsEnabled,
   newTrackerFromLocalStorageOptions,
-} from './trackerHelper'
+} from './liveSnippetUtils'
 
 const successAlert = (show, onClose) => {
   return (

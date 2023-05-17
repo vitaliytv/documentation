@@ -13,7 +13,7 @@ import {
 import ClearIcon from '@mui/icons-material/Clear'
 
 import styles from './styles.module.css'
-import { newTrackerFromAppIdAndCollectorUrl } from './trackerHelper'
+import { newTrackerFromAppIdAndCollectorUrl } from './liveSnippetUtils'
 
 const isValidUrl = (s: string) => {
   // Don't error if empty string
