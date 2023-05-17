@@ -1,19 +1,19 @@
 import React from 'react'
-import { v4 as uuidv4 } from 'uuid'
-import {
-  Button,
-  TextField,
-  Card,
-  CardContent,
-  Typography,
-  Popover,
-  InputAdornment,
-  IconButton,
-} from '@mui/material'
-import ClearIcon from '@mui/icons-material/Clear'
+
+import { Button, Card, CardContent, Typography, Popover } from '@mui/material'
 
 import styles from './styles.module.css'
 import { newTrackerFromAppIdAndCollectorUrl } from '../liveSnippetUtils'
+import { ModalTextField, createModalInput } from '../ModalTextField'
+
+/*
+ * Set the global namespace for snowplow so typescript doesn't complain
+ */
+declare global {
+  interface Window {
+    snowplow: any
+  }
+}
 
 const isValidUrl = (s: string) => {
   // Don't error if empty string
@@ -46,133 +46,6 @@ const getAppIdError = (appId: string): string => {
     return ''
   }
 }
-
-/*
- * Represents the mutable state of a text input field on the modal
- * @param value - the value of the text input
- * @param error - the error message to display
- * @param disabled - whether the text input is disabled
- */
-type ModalState = {
-  value: string
-  error: string
-  disabled: boolean
-}
-
-/*
- * Represents a text input field on the modal
- * @param fieldName - the name of the cookie to store the value in
- * @param inputRef - a ref to the text input, used to focus the input when the field is cleared
- * @param state - the state of the modal
- * @param setState - a function to update the state of the modal
- * @param clear - Clears the text input, sets the error to empty, removes from localStorage, and enables the text input
- * @param save - Saves the text input, sets the error to empty, adds to localStorage, and disables the text input
- * @param delete - Deletes the text input, sets the error to empty, removes from localStorage, and enables the text input
- * @param getError - Returns the error message for the text input
- */
-type ModalInput = {
-  fieldName: 'appId' | 'collectorEndpoint'
-  inputRef: React.RefObject<HTMLInputElement>
-  state: ModalState
-  setState: React.Dispatch<React.SetStateAction<ModalState>>
-  clear: () => void
-  saveToStorage: () => void
-  removeFromStorage: () => void
-  getError: () => string
-}
-
-const clearModalInput = (input: ModalInput) => {
-  input.setState({
-    value: '',
-    error: '',
-    disabled: false,
-  })
-  input.removeFromStorage()
-}
-
-/*
- * Creates a ModalInput object that can be used to create a modal input
- * @param name - the name of the input (e.g. collectorEndpoint or appId)
- * @param getError - a function that takes in the value of the input and returns an error string
- * @returns a ModalInput object
- */
-const createModalInput = (
-  fieldName: 'appId' | 'collectorEndpoint',
-  getError: (val: string) => string
-): ModalInput => {
-  const [state, setState] = React.useState<ModalState>({
-    value: localStorage.getItem(fieldName) || '',
-    error: '',
-    disabled: Boolean(localStorage.getItem(fieldName)),
-  })
-
-  let ret: ModalInput = {
-    fieldName,
-    inputRef: React.useRef<HTMLInputElement>(null),
-    state,
-    setState,
-    clear: () => clearModalInput(ret),
-    saveToStorage: () => {
-      localStorage.setItem(ret.fieldName, ret.state.value)
-      setState((prev) => ({ ...prev, disabled: true, error: '' }))
-    },
-    removeFromStorage: () => {
-      localStorage.removeItem(ret.fieldName)
-      setState((prev) => ({ ...prev, disabled: false, error: '' }))
-    },
-    getError: () => getError(ret.state.value),
-  }
-
-  return ret
-}
-
-/*
- * Set the global namespace for snowplow so typescript doesn't complain
- */
-declare global {
-  interface Window {
-    snowplow: any
-  }
-}
-
-const ModalTextField = (props: {
-  label: string
-  modalInput: ModalInput
-  setLiveSnippetsEnabled: (enabled: boolean) => void
-}) => (
-  <TextField
-    ref={props.modalInput.inputRef}
-    disabled={props.modalInput.state.disabled}
-    sx={{ m: 1, mx: 0 }}
-    margin="normal"
-    fullWidth
-    value={props.modalInput.state.value}
-    onChange={(e) => {
-      props.modalInput.setState((prev) => ({
-        ...prev,
-        value: e.target.value,
-      }))
-    }}
-    label={props.label}
-    error={Boolean(props.modalInput.state.error)}
-    helperText={props.modalInput.state.error}
-    InputProps={{
-      endAdornment: props.modalInput.state.disabled && (
-        <InputAdornment position="end">
-          <IconButton
-            edge="end"
-            onClick={() => {
-              props.modalInput.clear()
-              props.setLiveSnippetsEnabled(false)
-            }}
-          >
-            <ClearIcon />
-          </IconButton>
-        </InputAdornment>
-      ),
-    }}
-  ></TextField>
-)
 
 export function LiveSnippetModal(props: {
   setShowSuccessAlert: (show: boolean) => void
