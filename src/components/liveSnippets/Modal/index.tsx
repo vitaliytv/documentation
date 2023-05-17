@@ -201,7 +201,7 @@ export function LiveSnippetModal(props: {
       // the modal is opened, due to the scroll bar disappearing
       disableScrollLock={true}
       open={Boolean(props.modalAnchor)}
-      modalAnchor={props.modalAnchor}
+      anchorEl={props.modalAnchor}
       onClose={props.closeModal}
       transformOrigin={{
         vertical: 'top',
