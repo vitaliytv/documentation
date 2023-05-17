@@ -2,13 +2,13 @@ import React, { useEffect } from 'react'
 import { Alert, AlertTitle, IconButton, Snackbar } from '@mui/material'
 import FlashOnIcon from '@mui/icons-material/FlashOnRounded'
 
-import { LiveSnippetModal } from './LiveSnippetModal'
+import { LiveSnippetModal } from '../Modal'
 import styles from './styles.module.css'
 
 import {
   liveSnippetsEnabled,
   newTrackerFromLocalStorageOptions,
-} from './liveSnippetUtils'
+} from '../liveSnippetUtils'
 
 const successAlert = (show, onClose) => {
   return (
