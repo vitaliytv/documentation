@@ -135,10 +135,49 @@ declare global {
   }
 }
 
+const ModalTextField = (props: {
+  label: string
+  modalInput: ModalInput
+  setLiveSnippetsEnabled: (enabled: boolean) => void
+}) => (
+  <TextField
+    ref={props.modalInput.inputRef}
+    disabled={props.modalInput.state.disabled}
+    sx={{ m: 1, mx: 0 }}
+    margin="normal"
+    fullWidth
+    value={props.modalInput.state.value}
+    onChange={(e) => {
+      props.modalInput.setState((prev) => ({
+        ...prev,
+        value: e.target.value,
+      }))
+    }}
+    label={props.label}
+    error={Boolean(props.modalInput.state.error)}
+    helperText={props.modalInput.state.error}
+    InputProps={{
+      endAdornment: props.modalInput.state.disabled && (
+        <InputAdornment position="end">
+          <IconButton
+            edge="end"
+            onClick={() => {
+              props.modalInput.clear()
+              props.setLiveSnippetsEnabled(false)
+            }}
+          >
+            <ClearIcon />
+          </IconButton>
+        </InputAdornment>
+      ),
+    }}
+  ></TextField>
+)
+
 export function LiveSnippetModal(props: {
   setShowSuccessAlert: (show: boolean) => void
   anchorEl: any
-  handleModalClose: () => void
+  closeModal: () => void
   setLiveSnippetsEnabled: (enabled: boolean) => void
 }) {
   const collector = createModalInput(
@@ -161,7 +200,7 @@ export function LiveSnippetModal(props: {
       disableScrollLock={true}
       open={Boolean(props.anchorEl)}
       anchorEl={props.anchorEl}
-      onClose={props.handleModalClose}
+      onClose={props.closeModal}
       transformOrigin={{
         vertical: 'top',
         horizontal: 'center',
@@ -192,73 +231,18 @@ export function LiveSnippetModal(props: {
                 <a>Snowplow Micro</a>
               </Typography>
 
-              <TextField
-                ref={collector.inputRef}
-                disabled={collector.state.disabled}
-                sx={{ m: 1, mx: 0 }}
-                variant="outlined"
-                fullWidth
-                value={collector.state.value}
-                onChange={(e) => {
-                  collector.setState((prev) => ({
-                    ...prev,
-                    value: e.target.value,
-                  }))
-                }}
-                label={'Collector endpoint'}
-                error={Boolean(collector.state.error)}
-                helperText={collector.state.error}
-                InputProps={{
-                  endAdornment: collector.state.disabled && (
-                    <InputAdornment position="end">
-                      <IconButton
-                        edge="end"
-                        onClick={() => {
-                          collector.clear()
-                          props.setLiveSnippetsEnabled(false)
-                        }}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              ></TextField>
+              <ModalTextField
+                label="Collector Endpoint"
+                modalInput={collector}
+                setLiveSnippetsEnabled={props.setLiveSnippetsEnabled}
+              />
             </div>
 
-            <TextField
-              ref={appId.inputRef}
-              disabled={appId.state.disabled}
-              sx={{ m: 1, mx: 0 }}
-              margin="normal"
-              fullWidth
-              value={appId.state.value}
-              onChange={(e) => {
-                appId.setState((prev) => ({
-                  ...prev,
-                  value: e.target.value,
-                }))
-              }}
+            <ModalTextField
               label="App ID"
-              error={Boolean(appId.state.error)}
-              helperText={appId.state.error}
-              InputProps={{
-                endAdornment: appId.state.disabled && (
-                  <InputAdornment position="end">
-                    <IconButton
-                      edge="end"
-                      onClick={() => {
-                        appId.clear()
-                        props.setLiveSnippetsEnabled(false)
-                      }}
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            ></TextField>
-
+              modalInput={appId}
+              setLiveSnippetsEnabled={props.setLiveSnippetsEnabled}
+            />
             <div
               style={{
                 display: 'flex',
@@ -284,7 +268,7 @@ export function LiveSnippetModal(props: {
                     )
 
                     props.setLiveSnippetsEnabled(true)
-                    props.handleModalClose()
+                    props.closeModal()
                     props.setShowSuccessAlert(true)
                   } else {
                     collector.setState((prev) => ({

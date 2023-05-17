@@ -46,7 +46,7 @@ export default function LiveSnippetNavbarItem(props: {
           mut.type === 'attributes' &&
           (mut.target as any).classList.contains('DocSearch--active')
         ) {
-          handleClose()
+          closeModal()
         }
       }
     })
@@ -56,11 +56,11 @@ export default function LiveSnippetNavbarItem(props: {
     })
   }, [])
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const openModal = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
 
-  const handleClose = () => {
+  const closeModal = () => {
     setAnchorEl(null)
   }
 
@@ -108,7 +108,7 @@ export default function LiveSnippetNavbarItem(props: {
         }
         `}
         onClick={(e) => {
-          handleClick(e)
+          openModal(e)
         }}
       >
         <FlashOnIcon sx={{ transform: 'translate(0.5px, 1px)' }} />
@@ -118,7 +118,7 @@ export default function LiveSnippetNavbarItem(props: {
         <LiveSnippetModal
           setShowSuccessAlert={setShowSuccessAlert}
           anchorEl={anchorEl}
-          handleModalClose={handleClose}
+          closeModal={closeModal}
           setLiveSnippetsEnabled={setEnabled}
         />
       )}
