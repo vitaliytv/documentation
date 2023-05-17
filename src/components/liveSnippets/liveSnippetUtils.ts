@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { parseSnowplowJsTrackerMethod } from './walker'
+import { parseSnowplowJsTrackerMethod } from './snippetParser'
 
 export const LIVE_SNIPPET_TRACKER_PREFIX = 'snowplowDocs-'
 /*

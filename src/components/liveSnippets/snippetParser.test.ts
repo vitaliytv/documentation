@@ -1,4 +1,4 @@
-import { parseSnowplowJsTrackerMethod } from './walker'
+import { parseSnowplowJsTrackerMethod } from './snippetParser'
 import { describe, expect, test } from '@jest/globals'
 
 describe('parseSnowplowJsTrackerMethod without window', () => {
@@ -95,5 +95,4 @@ describe('parseSnowplowJsTrackerMethod without window', () => {
       ],
     })
   })
-
 })
