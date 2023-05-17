@@ -36,7 +36,8 @@ const successAlert = (show, onClose) => {
 export default function LiveSnippetNavbarItem(props: {
   mobile?: boolean
 }): JSX.Element {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const [modalAnchor, setModalAnchor] =
+    React.useState<HTMLButtonElement | null>(null)
   const [enabled, setEnabled] = React.useState(liveSnippetsEnabled())
 
   useEffect(() => {
@@ -57,11 +58,11 @@ export default function LiveSnippetNavbarItem(props: {
   }, [])
 
   const openModal = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
+    setModalAnchor(event.currentTarget)
   }
 
   const closeModal = () => {
-    setAnchorEl(null)
+    setModalAnchor(null)
   }
 
   const [openSuccessAlert, setShowSuccessAlert] = React.useState(false)
@@ -99,7 +100,7 @@ export default function LiveSnippetNavbarItem(props: {
           color: enabled ? '#FDCA40' : 'inherit',
         }}
         className={`${styles.liveSnippetButton} ${
-          Boolean(anchorEl) ? styles.snippetButtonModalOpen : ''
+          Boolean(modalAnchor) ? styles.snippetButtonModalOpen : ''
         }
         ${
           enabled
@@ -114,10 +115,10 @@ export default function LiveSnippetNavbarItem(props: {
         <FlashOnIcon sx={{ transform: 'translate(0.5px, 1px)' }} />
       </IconButton>
 
-      {anchorEl && (
+      {modalAnchor && (
         <LiveSnippetModal
           setShowSuccessAlert={setShowSuccessAlert}
-          anchorEl={anchorEl}
+          modalAnchor={modalAnchor}
           closeModal={closeModal}
           setLiveSnippetsEnabled={setEnabled}
         />

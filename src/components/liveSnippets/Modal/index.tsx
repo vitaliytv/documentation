@@ -176,7 +176,7 @@ const ModalTextField = (props: {
 
 export function LiveSnippetModal(props: {
   setShowSuccessAlert: (show: boolean) => void
-  anchorEl: any
+  modalAnchor: any
   closeModal: () => void
   setLiveSnippetsEnabled: (enabled: boolean) => void
 }) {
@@ -197,9 +197,11 @@ export function LiveSnippetModal(props: {
         vertical: 'center',
         horizontal: 'center',
       }}
+      // Disable scroll lock so the page doesn't jump when
+      // the modal is opened, due to the scroll bar disappearing
       disableScrollLock={true}
-      open={Boolean(props.anchorEl)}
-      anchorEl={props.anchorEl}
+      open={Boolean(props.modalAnchor)}
+      modalAnchor={props.modalAnchor}
       onClose={props.closeModal}
       transformOrigin={{
         vertical: 'top',
