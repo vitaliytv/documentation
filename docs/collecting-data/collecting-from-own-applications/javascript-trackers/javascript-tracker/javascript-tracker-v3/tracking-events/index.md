@@ -6,7 +6,7 @@ sidebar_position: 1000
 
 ```mdx-code-block
 import Block5966 from "@site/docs/reusable/javascript-tracker-release-badge-v3/_index.md"
-import {JavaScriptTrackerExecutable} from "/src/components/liveSnippets/main.tsx"
+import CodeBlock from "@theme/CodeBlock"
 
 <Block5966/>
 ```
@@ -66,19 +66,17 @@ snowplow('trackPageView');
 
 Track pageview is called using the simple:
 
-<UserTracker/>
-
-<JavaScriptTrackerExecutable>{
-`  snowplow('trackPageView');
-`}</JavaScriptTrackerExecutable>
+```javascript runnable
+snowplow('trackPageView');
+```
 
 This method automatically captures the URL, referrer and page title (inferred from the `Title` tag.
 
 If you wish, you can override the title with a custom value:
 
-<JavaScriptTrackerExecutable>{
-`snowplow('trackPageView', { title: 'my custom page title' });
-`}</JavaScriptTrackerExecutable>
+```javascript runnable
+snowplow('trackPageView', { title: 'my custom page title' });
+```
 
 `trackPageView` can also be passed an array of custom context as an additional final parameter. See [custom context](#custom-context) for more information.
 
@@ -140,10 +138,9 @@ snowplow('enableActivityTracking', {
   minimumVisitLength: 30, 
   heartbeatDelay: 10 
 });
-```
 
 snowplow('trackPageView');
-
+```
 
 The first ping would occur after 30 seconds, and subsequent pings every 10 seconds as long as the user continued to browse the page actively.
 
@@ -276,8 +273,8 @@ snowplow('trackSelfDescribingEvent', {{SELF-DESCRIBING EVENT JSON}});
 
 For example:
 
-<JavaScriptTrackerExecutable>{
-`snowplow('trackSelfDescribingEvent', {
+```javascript
+snowplow('trackSelfDescribingEvent', {
   event: {
     schema: 'iglu:com.acme_company/viewed_product/jsonschema/1-0-0',
     data: {
@@ -291,7 +288,7 @@ For example:
     }
   }
 });
-`}</JavaScriptTrackerExecutable>
+```
 
 The second argument is a [self-describing JSON](http://snowplowanalytics.com/blog/2014/05/15/introducing-self-describing-jsons/). It has two fields:
 
@@ -324,27 +321,27 @@ There are five parameters can be associated with each structured event. Of them,
 
 The async specification for the `trackStructEvent` method is:
 
-<JavaScriptTrackerExecutable>{
-`snowplow('trackStructEvent', {
+```javascript runnable
+snowplow('trackStructEvent', {
   category: 'category',
   action: 'action',
   label: 'label',
   property: 'property',
   value: 0.0
 });
-`}</JavaScriptTrackerExecutable>
+```
 
 An example of tracking a user listening to a music mix:
 
-<JavaScriptTrackerExecutable>{
-`snowplow('trackStructEvent', {
+```javascript runnable
+snowplow('trackStructEvent', {
   category: 'Mixes', 
   action: 'Play', 
   label: 'MrC/fabric-0503-mix', 
   property: '',
   value: 0.0
 });
-`}</JavaScriptTrackerExecutable>
+```
 
 Note that in the above example no value is set for the `event property`.
 

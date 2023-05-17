@@ -1,0 +1,50 @@
+:global(.theme-code-block:hover) .runButtonCopied {
+  opacity: 1 !important;
+}
+
+.runButtonIcons {
+  position: relative;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.runButtonIcon,
+.runButtonSuccessIcon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  fill: currentColor;
+  opacity: inherit;
+  width: inherit;
+  height: inherit;
+  transition: all 0.15s ease;
+}
+
+.loadingIcon {
+  color: var(--prism-icon) !important;
+}
+
+.runButtonIcon {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.runButtonSuccessIcon {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.33);
+  opacity: 0;
+  color: #00d600;
+}
+
+.runButtonCopied .runButtonIcon {
+  transform: scale(0.33);
+  opacity: 0;
+}
+
+.runButtonCopied .runButtonSuccessIcon {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  transition-delay: 0.075s;
+}
