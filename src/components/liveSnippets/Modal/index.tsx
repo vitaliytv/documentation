@@ -230,7 +230,7 @@ export function LiveSnippetModal(props: {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="caption" sx={{ ml: '2px' }}>
                 Don't have a collector? Get set up quickly with{' '}
-                <a>Snowplow Micro</a>
+                <a href="/docs/getting-started-with-micro">Snowplow Micro</a>
               </Typography>
 
               <ModalTextField
