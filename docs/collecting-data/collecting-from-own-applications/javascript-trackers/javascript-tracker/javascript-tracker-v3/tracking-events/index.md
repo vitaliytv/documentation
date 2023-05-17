@@ -65,7 +65,7 @@ snowplow('trackPageView');
 
 Track pageview is called using the simple:
 
-```javascript
+```javascript runnable
 snowplow('trackPageView');
 ```
 
@@ -73,7 +73,7 @@ This method automatically captures the URL, referrer and page title (inferred fr
 
 If you wish, you can override the title with a custom value:
 
-```javascript
+```javascript runnable
 snowplow('trackPageView', { title: 'my custom page title' });
 ```
 
@@ -132,7 +132,7 @@ snowplow('enableActivityTracking', {
 
 where `minimumVisitLength` is the time period from page load before the first page ping occurs, in seconds. `heartbeat` is the number of seconds between each page ping, once they have started. So, if you executed:
 
-```javascript
+```javascript runnable
 snowplow('enableActivityTracking', { 
   minimumVisitLength: 30, 
   heartbeatDelay: 10 
