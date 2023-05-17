@@ -145,6 +145,10 @@ export function runSnippet(code: string) {
   )
 }
 
+/*
+ * Returns true if the given metastring contains the word "runnable"
+ * This is used to determine whether to render the "Run" button
+ */
 const runnableRegex = /runnable/
 export function parseRunnable(metastring?: string): boolean {
   return runnableRegex.test(metastring)
