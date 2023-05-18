@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { IconButton, InputAdornment, TextField } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
@@ -56,10 +56,18 @@ export const createModalInput = (
   fieldName: 'appId' | 'collectorEndpoint',
   getError: (val: string) => string
 ): ModalInput => {
+  let value = ''
+  let disabled = false
+
+  useEffect(() => {
+    value = window.localStorage.getItem(fieldName) || ''
+    disabled = Boolean(window.localStorage.getItem(fieldName))
+  })
+
   const [state, setState] = React.useState<ModalState>({
-    value: localStorage.getItem(fieldName) || '',
+    value,
     error: '',
-    disabled: Boolean(localStorage.getItem(fieldName)),
+    disabled,
   })
 
   let ret: ModalInput = {
@@ -69,11 +77,15 @@ export const createModalInput = (
     setState,
     clear: () => clearModalInput(ret),
     saveToStorage: () => {
-      localStorage.setItem(ret.fieldName, ret.state.value)
+      useEffect(() => {
+        window.localStorage.setItem(ret.fieldName, ret.state.value)
+      })
       setState((prev) => ({ ...prev, disabled: true, error: '' }))
     },
     removeFromStorage: () => {
-      localStorage.removeItem(ret.fieldName)
+      useEffect(() => {
+        window.localStorage.removeItem(ret.fieldName)
+      })
       setState((prev) => ({ ...prev, disabled: false, error: '' }))
     },
     getError: () => getError(ret.state.value),

@@ -22,21 +22,23 @@ export enum LiveSnippetTrackerFields {
  * Returns the tracker ID in localStorage for the live snippet tracker
  */
 export function getLiveSnippetTrackerId(): string | null {
-  return localStorage.getItem(LiveSnippetTrackerFields.ID)
+  return window.localStorage.getItem(LiveSnippetTrackerFields.ID)
 }
 
 /*
  * Returns the app ID in localStorage for the live snippet tracker
  */
 export function getLiveSnippetAppId(): string | null {
-  return localStorage.getItem(LiveSnippetTrackerFields.APP_ID)
+  return window.localStorage.getItem(LiveSnippetTrackerFields.APP_ID)
 }
 
 /*
  * Returns the collector URL in localStorage for the live snippet tracker
  */
 export function getLiveSnippetCollectorUrl(): string | null {
-  return localStorage.getItem(LiveSnippetTrackerFields.COLLECTOR_ENDPOINT)
+  return window.localStorage.getItem(
+    LiveSnippetTrackerFields.COLLECTOR_ENDPOINT
+  )
 }
 
 /*
@@ -51,9 +53,9 @@ export function setLiveSnippetFields({
   appId: string
   collectorEndpoint: string
 }) {
-  localStorage.setItem(LiveSnippetTrackerFields.ID, trackerId)
-  localStorage.setItem(LiveSnippetTrackerFields.APP_ID, appId)
-  localStorage.setItem(
+  window.localStorage.setItem(LiveSnippetTrackerFields.ID, trackerId)
+  window.localStorage.setItem(LiveSnippetTrackerFields.APP_ID, appId)
+  window.localStorage.setItem(
     LiveSnippetTrackerFields.COLLECTOR_ENDPOINT,
     collectorEndpoint
   )
@@ -71,7 +73,7 @@ export function getLiveSnippetNamespace(): string {
  * @returns the new tracker ID
  */
 export function createLiveSnippetTrackerNamespace(uuid): string {
-  localStorage.setItem(LiveSnippetTrackerFields.ID, uuid)
+  window.localStorage.setItem(LiveSnippetTrackerFields.ID, uuid)
   return LIVE_SNIPPET_TRACKER_PREFIX + uuid
 }
 

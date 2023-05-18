@@ -6,30 +6,37 @@ import { LiveSnippetModal } from '../Modal'
 import styles from './styles.module.css'
 
 import {
+  getLiveSnippetAppId,
+  getLiveSnippetCollectorUrl,
   liveSnippetsEnabled,
   newTrackerFromLocalStorageOptions,
 } from '../liveSnippetUtils'
+import BrowserOnly from '@docusaurus/BrowserOnly'
 
 const successAlert = (show, onClose) => {
   return (
-    <Snackbar open={show} autoHideDuration={5000} onClose={onClose}>
-      <Alert
-        sx={{ color: 'primary' }}
-        variant="filled"
-        severity="success"
-        className={styles.successAlert}
-      >
-        <AlertTitle>Live Snippets Enabled 🎉</AlertTitle>
-        Events with App ID{' '}
-        <span className={styles.successAlertCollectorUrl}>
-          {localStorage.getItem('appId')}
-        </span>{' '}
-        will be sent to{' '}
-        <span className={styles.successAlertCollectorUrl}>
-          {localStorage.getItem('collectorEndpoint')}
-        </span>
-      </Alert>
-    </Snackbar>
+    <BrowserOnly>
+      {() => (
+        <Snackbar open={show} autoHideDuration={5000} onClose={onClose}>
+          <Alert
+            sx={{ color: 'primary' }}
+            variant="filled"
+            severity="success"
+            className={styles.successAlert}
+          >
+            <AlertTitle>Live Snippets Enabled 🎉</AlertTitle>
+            Events with App ID{' '}
+            <span className={styles.successAlertCollectorUrl}>
+              {getLiveSnippetAppId()}
+            </span>{' '}
+            will be sent to{' '}
+            <span className={styles.successAlertCollectorUrl}>
+              {getLiveSnippetCollectorUrl()}
+            </span>
+          </Alert>
+        </Snackbar>
+      )}
+    </BrowserOnly>
   )
 }
 
@@ -38,7 +45,13 @@ export default function LiveSnippetNavbarItem(props: {
 }): JSX.Element {
   const [modalAnchor, setModalAnchor] =
     React.useState<HTMLButtonElement | null>(null)
-  const [enabled, setEnabled] = React.useState(liveSnippetsEnabled())
+
+  let snippetsEnabled = false
+  useEffect(() => {
+    snippetsEnabled = liveSnippetsEnabled()
+  }, [])
+
+  const [enabled, setEnabled] = React.useState(snippetsEnabled)
 
   useEffect(() => {
     const observer = new MutationObserver((mutation) => {
