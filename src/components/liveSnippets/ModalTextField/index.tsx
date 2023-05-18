@@ -77,15 +77,11 @@ export const createModalInput = (
     setState,
     clear: () => clearModalInput(ret),
     saveToStorage: () => {
-      useEffect(() => {
-        window.localStorage.setItem(ret.fieldName, ret.state.value)
-      })
+      window.localStorage.setItem(ret.fieldName, ret.state.value)
       setState((prev) => ({ ...prev, disabled: true, error: '' }))
     },
     removeFromStorage: () => {
-      useEffect(() => {
-        window.localStorage.removeItem(ret.fieldName)
-      })
+      window.localStorage.removeItem(ret.fieldName)
       setState((prev) => ({ ...prev, disabled: false, error: '' }))
     },
     getError: () => getError(ret.state.value),

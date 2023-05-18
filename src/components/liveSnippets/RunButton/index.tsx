@@ -37,17 +37,16 @@ export default function RunButton({ code, className }: Props): JSX.Element {
   const [runState, setRunState] = useState(RunState.IDLE)
   const runTimeout = useRef<number | undefined>(undefined)
 
-  const handleRunCode = () =>
-    useEffect(() => {
-      setRunState(RunState.RUNNING)
-      runSnippet(code)
+  const handleRunCode = () => {
+    setRunState(RunState.RUNNING)
+    runSnippet(code)
+    runTimeout.current = window.setTimeout(() => {
+      setRunState(RunState.DONE)
       runTimeout.current = window.setTimeout(() => {
-        setRunState(RunState.DONE)
-        runTimeout.current = window.setTimeout(() => {
-          setRunState(RunState.IDLE)
-        }, 500)
-      }, 750)
-    }, [code])
+        setRunState(RunState.IDLE)
+      }, 500)
+    }, 750)
+  }
 
   useEffect(() => () => window.clearTimeout(runTimeout.current), [])
 

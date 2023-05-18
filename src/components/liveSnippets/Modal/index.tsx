@@ -139,15 +139,13 @@ export function LiveSnippetModal(props: {
                       const appIdError = appId.getError()
 
                       if (collectorEndpointError === '' && appIdError === '') {
-                        useEffect(() => {
-                          collector.saveToStorage()
-                          appId.saveToStorage()
+                        collector.saveToStorage()
+                        appId.saveToStorage()
 
-                          newTrackerFromAppIdAndCollectorUrl(
-                            appId.state.value,
-                            collector.state.value
-                          )
-                        })
+                        newTrackerFromAppIdAndCollectorUrl(
+                          appId.state.value,
+                          collector.state.value
+                        )
 
                         props.setLiveSnippetsEnabled(true)
                         props.closeModal()
