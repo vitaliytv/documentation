@@ -1,5 +1,5 @@
 import ComponentTypes from '@theme-original/NavbarItem/ComponentTypes'
-import LiveSnippetNavbarItem from '@site/src/components/liveSnippets/NavbarButton'
+import LiveSnippetNavbarItem from '@site/src/components/LiveSnippets/NavbarButton'
 
 export default {
   ...ComponentTypes,
