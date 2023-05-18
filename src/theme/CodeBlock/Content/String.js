@@ -15,8 +15,8 @@ import WordWrapButton from '@theme/CodeBlock/WordWrapButton'
 import Container from '@theme/CodeBlock/Container'
 import styles from './styles.module.css'
 
-import RunButton from '@theme/src/components/LiveSnippets/RunButton'
-import { parseRunnable } from '@theme/src/components/LiveSnippets/liveSnippetUtils'
+import RunButton from '@site/src/components/LiveSnippets/RunButton'
+import { parseRunnable } from '@site/src/components/LiveSnippets/liveSnippetUtils'
 
 export default function CodeBlockString({
   children,
