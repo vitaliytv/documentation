@@ -16,11 +16,12 @@ import Container from '@theme/CodeBlock/Container'
 import styles from './styles.module.css'
 
 const RunButton = React.lazy(() =>
-  import('@site/src/components/LiveSnippets/RunButton')
+  import('../../../../src/components/LiveSnippets/RunButton')
 )
 const parseRunnable = React.lazy(
   () =>
-    import('@site/src/components/LiveSnippets/liveSnippetUtils').parseRunnable
+    import('../../../../src/components/LiveSnippets/liveSnippetUtils')
+      .parseRunnable
 )
 
 export default function CodeBlockString({
