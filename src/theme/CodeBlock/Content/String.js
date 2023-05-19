@@ -15,8 +15,13 @@ import WordWrapButton from '@theme/CodeBlock/WordWrapButton'
 import Container from '@theme/CodeBlock/Container'
 import styles from './styles.module.css'
 
-import RunButton from require.resolve('@site/src/components/LiveSnippets/RunButton')
-import { parseRunnable } from require.resolve('@site/components/LiveSnippets/liveSnippetUtils')
+const RunButton = React.lazy(() =>
+  import('@site/src/components/LiveSnippets/RunButton')
+)
+const parseRunnable = React.lazy(
+  () =>
+    import('@site/src/components/LiveSnippets/liveSnippetUtils').parseRunnable
+)
 
 export default function CodeBlockString({
   children,
